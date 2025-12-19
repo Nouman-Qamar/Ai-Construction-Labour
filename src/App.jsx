@@ -7,11 +7,14 @@ import HeaderPage from "./Components/Header/header";
 import Sidebar from "./Components/Sidebar/sidebar";
 
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 
-import DashboardOverview from "./components/Dashboard-Page/landing";
+
 import ClientProfilePage from "./components/Profile/profile";
+import Landing from "./components/Dashboard-Page/landing";
+import MyJobsPage from "./components/MyJob/MyJobsPage";
+
 
 
 const { Header, Sider, Content } = Layout;
@@ -40,8 +43,8 @@ function App() {
 
           <Content className="content">
             <Routes>
-              <Route path="/" element={<DashboardOverview />} />
-              
+              <Route path="/" element={<Landing />} />
+              <Route path="/Jobs" element={<MyJobsPage />} />
               <Route path="/Client/profile" element={<ClientProfilePage />} />
             </Routes>
           </Content>

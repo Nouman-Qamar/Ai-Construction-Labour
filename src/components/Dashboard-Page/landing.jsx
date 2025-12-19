@@ -1,272 +1,185 @@
-import {  useState } from "react";
-import {
-  FolderKanban,
-  Clock,
-  CheckCircle2,
-  FileCheck,
-  Bell,
-  DollarSign,
-} from "lucide-react";
-import { Modal } from "antd";
-import "./landing.css";
+"use client"
 
-export default function DashboardOverview() {
-  
-  const [stats] = useState([
-    {
-      label: "Total Projects Posted",
-      value: "12",
-      icon: FolderKanban,
-      trend: "+2 this month",
-      color: "stat-orange",
-    },
-    {
-      label: "Projects in Progress",
-      value: "5",
-      icon: Clock,
-      trend: "On schedule",
-      color: "stat-blue",
-    },
-    {
-      label: "Completed Projects",
-      value: "7",
-      icon: CheckCircle2,
-      trend: "58% success rate",
-      color: "stat-green",
-    },
-    {
-      label: "Pending Bids",
-      value: "8",
-      icon: FileCheck,
-      trend: "Requires review",
-      color: "stat-purple",
-    },
-  ]);
+import { useEffect, useState } from "react"
+import { Briefcase, CheckCircle2, Clock, UserCheck } from "lucide-react"
+import "./landing.css"
 
+const iconMap = {
+  total: Briefcase,
+  progress: Clock,
+  completed: CheckCircle2,
+  attendance: UserCheck,
+}
 
-  const [recentActivity] = useState([
-    {
-      id: 1,
-      type: "bid",
-      title: "New bid received",
-      description:
-        "Sarah Williams submitted a bid of $26,000 for Bathroom Remodel",
-      time: "30 minutes ago",
-      iconColor: "green",
-    },
-    {
-      id: 2,
-      type: "update",
-      title: "Progress update",
-      description:
-        "Mike Johnson updated Kitchen Renovation - Cabinet installation started",
-      time: "2 hours ago",
-      iconColor: "blue",
-    },
-    {
-      id: 3,
-      type: "bid",
-      title: "New bid received",
-      description:
-        "David Brown submitted a bid of $23,800 for Bathroom Remodel",
-      time: "5 hours ago",
-      iconColor: "green",
-    },
-    {
-      id: 4,
-      type: "status",
-      title: "Project status changed",
-      description: "Deck Construction marked as In Progress",
-      time: "1 day ago",
-      iconColor: "orange",
-    },
-    {
-      id: 5,
-      type: "accepted",
-      title: "Bid accepted",
-      description: "You accepted Mike Johnson’s bid for Kitchen Renovation",
-      time: "2 days ago",
-      iconColor: "green",
-    },
-  ]);
+export default function Landing() {
+  const [stats, setStats] = useState([])
+  const [activities, setActivities] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
- 
-  const [recentProjects] = useState([
-    {
-      id: 1,
-      name: "Kitchen Renovation",
-      contractor: "Mike Johnson",
-      budget: "$25,000",
-      due: "12/30/2025",
-      progress: 65,
-      status: "In Progress",
-      statusColor: "progress-blue",
-    },
-    {
-      id: 2,
-      name: "Bathroom Remodel",
-      contractor: "Sarah Williams",
-      budget: "$15,000",
-      due: "2/1/2026",
-      progress: 0,
-      status: "Bidding",
-      statusColor: "progress-yellow",
-    },
-    {
-      id: 3,
-      name: "Deck Construction",
-      contractor: "Tom Anderson",
-      budget: "$12,000",
-      due: "12/20/2025",
-      progress: 40,
-      status: "In Progress",
-      statusColor: "progress-blue",
-    },
-    {
-      id: 4,
-      name: "Garage Door Installation",
-      contractor: "Lisa Chen",
-      budget: "$3,500",
-      due: "11/15/2025",
-      progress: 100,
-      status: "Completed",
-      statusColor: "progress-green",
-    },
-  ]);
-
-  
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = (project) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // -----------------------------------------
-  // API PLACEHOLDERS (READY FOR BACKEND)
-  // -----------------------------------------
-  /*
   useEffect(() => {
-    // fetchStats();
-    // fetchProjects();
-    // fetchRecentActivity();
-  }, []);
-  */
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // 🔹 TODO: Replace with actual API endpoint
+      // const response = await fetch('/api/dashboard', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+      //   }
+      // });
+      // const data = await response.json();
+      // setStats(data.stats);
+      // setActivities(data.activities);
+
+      // 🔹 TEMP: Mock data for development
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      setStats([
+        {
+          id: 1,
+          title: "Total Jobs Assigned",
+          value: 12,
+          icon: "total",
+          color: "orange",
+          bgColor: "orangeBg",
+        },
+        {
+          id: 2,
+          title: "Jobs In Progress",
+          value: 5,
+          icon: "progress",
+          color: "blue",
+          bgColor: "blueBg",
+        },
+        {
+          id: 3,
+          title: "Jobs Completed",
+          value: 7,
+          icon: "completed",
+          color: "green",
+          bgColor: "greenBg",
+        },
+        {
+          id: 4,
+          title: "Attendance This Month",
+          value: "22/24",
+          icon: "attendance",
+          color: "red",
+          bgColor: "redBg",
+        },
+      ])
+
+      setActivities([
+        {
+          id: 1,
+          title: "New Job Assigned",
+          description: "City Plaza Construction - Phase 2",
+          time: "2 hours ago",
+          icon: "total",
+          color: "orange",
+          bgColor: "orangeBg",
+        },
+        {
+          id: 2,
+          title: "Job Status Updated",
+          description: "Residential Tower Project marked as In Progress",
+          time: "5 hours ago",
+          icon: "progress",
+          color: "blue",
+          bgColor: "blueBg",
+        },
+        {
+          id: 3,
+          title: "Attendance Recorded",
+          description: "Check-in at 8:00 AM - Check-out at 5:00 PM",
+          time: "Today",
+          icon: "attendance",
+          color: "green",
+          bgColor: "greenBg",
+        },
+      ])
+    } catch (err) {
+      setError(err.message || "Failed to load dashboard data")
+      console.error("Dashboard fetch error:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="dashboard loading-state">
+        <div className="spinner"></div>
+        <p>Loading dashboard...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard error-state">
+        <p className="error-message">{error}</p>
+        <button onClick={fetchDashboardData} className="retry-btn">
+          Retry
+        </button>
+      </div>
+    )
+  }
 
   return (
-    <div className="dashboard-layout">
-
-      
-      <h2>Dashboard</h2>
-      <p className="sub-heading">Welcome back! Here's what's happening with your projects.</p>
-
-     
-      <div className="stats-row">
-        {stats.map((item, i) => (
-          <div key={i} className="stat-box">
-            <div className={`stat-icon ${item.color}`}>
-              <item.icon size={22} color="#fff" />
-            </div>
-
-            <div className="stat-value">{item.value}</div>
-            <div className="stat-label">{item.label}</div>
-            <div className="stat-trend">{item.trend}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="content-grid">
-
-       
-        <div className="activity-box">
-          <h3>Recent Activity</h3>
-
-          {recentActivity.map((item) => (
-            <div key={item.id} className="activity-item">
-              <div className={`activity-icon ${item.iconColor}`}>
-                <Bell size={16} color="#fff" />
-              </div>
-
-              <div>
-                <h4>{item.title}</h4>
-                <p>{item.description}</p>
-                <span className="activity-time">{item.time}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        
-        <div className="projects-box">
-          <div className="projects-header">
-            <h3>Recent Projects</h3>
-            <button className="view-all-btn">View All</button>
-          </div>
-
-          {recentProjects.map((project) => (
-            <div key={project.id} className="project-card">
-              <div className="project-top">
+    <div className="dashboard">
+      {/* Stats Grid */}
+      <div className="statsGrid">
+        {stats.map((stat) => {
+          const Icon = iconMap[stat.icon]
+          return (
+            <div key={stat.id} className="statCard">
+              <div className="statContent">
                 <div>
-                  <h4>{project.name}</h4>
-                  <p>👤 {project.contractor} • <DollarSign size={12} /> {project.budget}</p>
+                  <p className="statTitle">{stat.title}</p>
+                  <p className="statValue">{stat.value}</p>
                 </div>
-
-                <span className={`project-status ${project.statusColor}`}>
-                  {project.status}
-                </span>
-              </div>
-
-              
-              <div className="progress-section">
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${project.progress}%` }}
-                  />
+                <div className={`iconBox ${stat.bgColor} ${stat.color}`}>
+                  <Icon size={24} />
                 </div>
-                <div className="progress-percent">{project.progress}%</div>
-              </div>
-
-              
-              <div className="project-footer">
-                <span className="due-date">📅 Due {project.due}</span>
-                <button className="details-btn" onClick={() => openModal(project)}>
-                  View Details →
-                </button>
               </div>
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
-      
-      <Modal
-        title="Project Details"
-        open={isModalOpen}
-        onCancel={closeModal}
-        footer={null}
-      >
-        {selectedProject && (
-          <div className="modal-content">
-            <h3>{selectedProject.name}</h3>
-            <p><strong>Contractor:</strong> {selectedProject.contractor}</p>
-            <p><strong>Budget:</strong> {selectedProject.budget}</p>
-            <p><strong>Status:</strong> {selectedProject.status}</p>
-            <p><strong>Due Date:</strong> {selectedProject.due}</p>
-
-            
-            <p className="modal-note">
-              🔌 <strong>API Placeholder:</strong> When backend is ready, load full project details here.
-            </p>
-          </div>
-        )}
-      </Modal>
-
+      {/* Recent Activity */}
+      <div className="activityCard">
+        <h3 className="sectionTitle">Recent Activity</h3>
+        <div className="activityList">
+          {activities.length > 0 ? (
+            activities.map((activity) => {
+              const Icon = iconMap[activity.icon]
+              return (
+                <div key={activity.id} className="activityItem">
+                  <div className={`iconBox small ${activity.bgColor} ${activity.color}`}>
+                    <Icon size={20} />
+                  </div>
+                  <div className="activityInfo">
+                    <p className="activityTitle">{activity.title}</p>
+                    <p className="activityDesc">{activity.description}</p>
+                  </div>
+                  <span className="activityTime">{activity.time}</span>
+                </div>
+              )
+            })
+          ) : (
+            <p className="emptyState">No recent activity</p>
+          )}
+        </div>
+      </div>
     </div>
-  );
+  )
 }
