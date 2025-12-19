@@ -1,226 +1,241 @@
-import { useState } from "react";
-import { Card, Row, Col, Avatar, Form, Input, Button, message, Upload, Modal, Space, Switch, Divider } from "antd";
-import { UserOutlined, MailOutlined, PhoneOutlined, HomeOutlined, CameraOutlined, LockOutlined, BellOutlined } from "@ant-design/icons";
-import "./profile.css";
+"use client"
 
+import { useState, useRef } from "react"
+import { User, Upload, FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react"
+import "./profile.css"
 
-const ClientProfilePage = () => {
-  const [form] = Form.useForm();
-  const [passwordForm] = Form.useForm();
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-
+export default function ProfilePage() {
   const [profileData, setProfileData] = useState({
-    fullName: "John Doe",
-    email: "john@example.com",
-    phone: "+1 555 987 6543",
-    address: "456 Client Street, City",
-  });
+    name: "Ahmed Hassan",
+    phone: "+92 300 1234567",
+    cnic: "12345-6789012-3",
+    skillType: "Mason",
+    experience: "8 years",
+  })
 
-  const [notificationPreferences, setNotificationPreferences] = useState({
-    emailUpdates: true,
-    smsAlerts: false,
-    projectNotifications: true,
-  });
+  const [photo, setPhoto] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState(null)
+  const [cnicFile, setCnicFile] = useState(null)
+  const [certFile, setCertFile] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState(null)
 
-  const handleImageChange = (info) => {
-    if (info.file.status === "done") {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
-        message.success("Profile picture updated");
-      };
-      reader.readAsDataURL(info.file.originFileObj);
+  const photoRef = useRef()
+  const cnicRef = useRef()
+  const certRef = useRef()
+
+  const handleChange = (e) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value })
+  }
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setPhoto(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-    form.setFieldsValue(profileData);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage(null)
 
-  const handleSave = (values) => {
-    setProfileData(values);
-    setIsEditing(false);
-    message.success("Profile updated successfully");
-  };
+    try {
+      // API ready structure
+      const formData = new FormData()
+      Object.entries(profileData).forEach(([key, value]) => formData.append(key, value))
+      if (photo) formData.append("photo", photo)
+      if (cnicFile) formData.append("cnicDocument", cnicFile)
+      if (certFile) formData.append("certificate", certFile)
 
-  const handlePasswordChange = (values) => {
-    if (values.newPassword !== values.confirmPassword) {
-      message.error("Passwords do not match");
-      return;
+      // 🔹 TODO: Replace with actual API endpoint
+      // const response = await fetch('/api/profile/update', {
+      //   method: 'PUT',
+      //   headers: {
+      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+      //   },
+      //   body: formData
+      // });
+      // const data = await response.json();
+
+      // 🔹 TEMP: Mock API call
+      console.log("Submitting profile data:", Object.fromEntries(formData))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      setMessage({ type: "success", text: "Profile updated successfully!" })
+    } catch (error) {
+      console.error("Profile update error:", error)
+      setMessage({ type: "error", text: error.message || "Failed to update profile" })
+    } finally {
+      setLoading(false)
     }
-    message.success("Password changed successfully");
-    setIsPasswordModalVisible(false);
-    passwordForm.resetFields();
-  };
-
-  const handleNotificationChange = (key) => {
-    setNotificationPreferences({
-      ...notificationPreferences,
-      [key]: !notificationPreferences[key],
-    });
-    message.success("Notification preference updated");
-  };
+  }
 
   return (
-    <div className="profile-container">
-      <Card className="profile-main-card">
-        <Row gutter={30} className="profile-content">
-          {/* IMAGE SECTION */}
-          <Col xs={24} md={10} className="profile-image-section">
-            <div className="image-wrapper">
-              <Avatar
-                className="profile-avatar"
-                icon={<UserOutlined />}
-                src={profileImage}
-              />
-              {isEditing && (
-                <Upload showUploadList={false} onChange={handleImageChange} accept="image/*">
-                  <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<CameraOutlined />}
-                    className="camera-button"
-                  />
-                </Upload>
+    <form className="profile-wrapper" onSubmit={handleSubmit}>
+      <div className="header">
+        <h2>Profile</h2>
+        
+      </div>
+
+      {message && (
+        <div className={`message ${message.type}`}>
+          {message.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+          <span>{message.text}</span>
+        </div>
+      )}
+
+      <div className="profile-grid">
+        {/* PROFILE INFO */}
+        <div className="card large">
+          <div className="card-title">
+            <User size={20} /> Profile Information
+          </div>
+
+          {/* Avatar */}
+          <div className="avatar-row">
+            <div className="avatar">
+              {photoPreview ? (
+                <img src={photoPreview || "/placeholder.svg"} alt="Profile" />
+              ) : (
+                <span className="avatar-initials">{profileData.name.charAt(0).toUpperCase()}</span>
               )}
             </div>
-          </Col>
 
-          {/* INFO SECTION */}
-          <Col xs={24} md={14} className="profile-info-section">
-            {!isEditing ? (
-              <div className="profile-info-display">
-                <h1 className="profile-title">Client Profile</h1>
+            <div>
+              <button type="button" className="outline-btn" onClick={() => photoRef.current.click()}>
+                <Upload size={16} /> Upload Photo
+              </button>
+              <input ref={photoRef} type="file" hidden accept="image/*" onChange={handlePhotoChange} />
+              <p className="help-text">JPG, PNG or WEBP. Max 5MB.</p>
+            </div>
+          </div>
 
-                <div className="info-item">
-                  <span className="info-label">Full Name</span>
-                  <p className="info-value">{profileData.fullName}</p>
-                </div>
+          {/* Inputs */}
+          <div className="form-grid">
+            <div className="input-group">
+              <label>Full Name</label>
+              <input
+                name="name"
+                value={profileData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
 
-                <div className="info-item">
-                  <span className="info-label">Email</span>
-                  <p className="info-value">{profileData.email}</p>
-                </div>
+            <div className="input-group">
+              <label>Phone</label>
+              <input
+                name="phone"
+                value={profileData.phone}
+                onChange={handleChange}
+                required
+                placeholder="+92 300 1234567"
+              />
+            </div>
 
-                <div className="info-item">
-                  <span className="info-label">Phone</span>
-                  <p className="info-value">{profileData.phone}</p>
-                </div>
+            <div className="input-group">
+              <label>CNIC Number</label>
+              <input
+                name="cnic"
+                value={profileData.cnic}
+                onChange={handleChange}
+                required
+                placeholder="12345-6789012-3"
+              />
+            </div>
 
-                <div className="info-item">
-                  <span className="info-label">Address</span>
-                  <p className="info-value">{profileData.address}</p>
-                </div>
+            <div className="input-group">
+              <label>Skill Type</label>
+              <input
+                name="skillType"
+                value={profileData.skillType}
+                onChange={handleChange}
+                required
+                placeholder="e.g., Mason, Electrician"
+              />
+            </div>
 
-                <div className="button-group">
-                  <Button type="primary" className="update-btn" onClick={handleEditClick}>
-                    Edit Profile
-                  </Button>
-                  <Button className="password-btn" icon={<LockOutlined />} onClick={() => setIsPasswordModalVisible(true)}>
-                    Change Password
-                  </Button>
-                </div>
+            <div className="input-group full">
+              <label>Experience</label>
+              <input
+                name="experience"
+                value={profileData.experience}
+                onChange={handleChange}
+                required
+                placeholder="e.g., 5 years"
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? "Updating..." : "Update Profile"}
+          </button>
+        </div>
+
+        {/* DOCUMENTS */}
+        <div className="card">
+          <div className="card-title">
+            <FileText size={20} /> Documents
+          </div>
+
+          {/* CNIC Upload */}
+          <div className="upload-section">
+            <label className="upload-label">CNIC Document</label>
+            <div className="upload-box" onClick={() => cnicRef.current.click()}>
+              <Upload size={24} />
+              <p>{cnicFile ? cnicFile.name : "Click to upload CNIC"}</p>
+              <span className="upload-hint">PDF, JPG or PNG</span>
+              <input
+                ref={cnicRef}
+                type="file"
+                hidden
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setCnicFile(e.target.files[0])}
+              />
+            </div>
+
+            {cnicFile && (
+              <div className="status success">
+                <CheckCircle2 size={16} /> Uploaded
+              </div>
+            )}
+          </div>
+
+          {/* Certificate Upload */}
+          <div className="upload-section">
+            <label className="upload-label">Skill Certificates</label>
+            <div className="upload-box" onClick={() => certRef.current.click()}>
+              <Upload size={24} />
+              <p>{certFile ? certFile.name : "Upload Skill Certificates"}</p>
+              <span className="upload-hint">PDF, JPG or PNG</span>
+              <input
+                ref={certRef}
+                type="file"
+                hidden
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setCertFile(e.target.files[0])}
+              />
+            </div>
+
+            {certFile ? (
+              <div className="status success">
+                <CheckCircle2 size={16} /> Uploaded
               </div>
             ) : (
-              <Form form={form} layout="vertical" onFinish={handleSave} className="profile-form">
-                <h1 className="profile-title">Edit Client Profile</h1>
-
-                <Form.Item name="fullName" label="Full Name" rules={[{ required: true }]}>
-                  <Input prefix={<UserOutlined />} />
-                </Form.Item>
-
-                <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
-                  <Input prefix={<MailOutlined />} />
-                </Form.Item>
-
-                <Form.Item name="phone" label="Phone" rules={[{ required: true }]}>
-                  <Input prefix={<PhoneOutlined />} />
-                </Form.Item>
-
-                <Form.Item name="address" label="Address" rules={[{ required: true }]}>
-                  <Input prefix={<HomeOutlined />} />
-                </Form.Item>
-
-                <div className="button-group">
-                  <Button type="primary" htmlType="submit" className="update-btn">
-                    Save
-                  </Button>
-                  <Button className="cancel-btn" onClick={() => setIsEditing(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </Form>
+              <div className="status pending">
+                <Clock size={16} /> Pending Upload
+              </div>
             )}
-          </Col>
-        </Row>
-      </Card>
-
-      {/* NOTIFICATIONS */}
-      <Card className="notification-card">
-        <div className="notification-header">
-          <BellOutlined className="notification-icon" />
-          <h2 className="notification-title">Notifications</h2>
-        </div>
-
-        <Divider />
-
-        <div className="notification-preferences">
-          <div className="preference-item">
-            <div className="preference-content">
-              <h4 className="preference-label">Email Updates</h4>
-              <p className="preference-description">Receive updates via email</p>
-            </div>
-            <Switch checked={notificationPreferences.emailUpdates} onChange={() => handleNotificationChange("emailUpdates")} />
-          </div>
-
-          <div className="preference-item">
-            <div className="preference-content">
-              <h4 className="preference-label">SMS Alerts</h4>
-              <p className="preference-description">Get alerts on your phone</p>
-            </div>
-            <Switch checked={notificationPreferences.smsAlerts} onChange={() => handleNotificationChange("smsAlerts")} />
-          </div>
-
-          <div className="preference-item">
-            <div className="preference-content">
-              <h4 className="preference-label">Project Notifications</h4>
-              <p className="preference-description">Project related updates</p>
-            </div>
-            <Switch checked={notificationPreferences.projectNotifications} onChange={() => handleNotificationChange("projectNotifications")} />
           </div>
         </div>
-      </Card>
-
-      {/* PASSWORD MODAL */}
-      <Modal
-        title="Change Password"
-        open={isPasswordModalVisible}
-        onCancel={() => setIsPasswordModalVisible(false)}
-        footer={null}
-        centered
-        className="password-modal"
-      >
-        <Form form={passwordForm} layout="vertical" onFinish={handlePasswordChange} className="password-form">
-          <Form.Item name="newPassword" label="New Password" rules={[{ required: true, min: 6 }]}>
-            <Input.Password prefix={<LockOutlined />} />
-          </Form.Item>
-
-          <Form.Item name="confirmPassword" label="Confirm Password" rules={[{ required: true }]}>
-            <Input.Password prefix={<LockOutlined />} />
-          </Form.Item>
-
-          <Button type="primary" htmlType="submit" block className="submit-password-btn">
-            Update Password
-          </Button>
-        </Form>
-      </Modal>
-    </div>
-  );
-};
-
-export default ClientProfilePage;
-
+      </div>
+    </form>
+  )
+}

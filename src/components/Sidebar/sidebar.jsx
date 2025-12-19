@@ -49,7 +49,7 @@ function Sidebar() {
           {
             key: "2",
             icon: <MdOutlineManageAccounts />,
-            label: <Link to="/myjob">My Job</Link>,
+            label: <Link to="/Jobs">My Job</Link>,
           },
 
           {
