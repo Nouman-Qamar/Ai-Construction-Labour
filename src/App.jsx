@@ -15,6 +15,8 @@ import ClientProfilePage from "./components/Profile/profile";
 import Landing from "./components/Dashboard-Page/landing";
 import MyJobsPage from "./components/MyJob/MyJobsPage";
 
+import AttendanceDashboard from "./components/Attendance/AttendanceDashboard";
+
 
 
 const { Header, Sider, Content } = Layout;
@@ -45,6 +47,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/Jobs" element={<MyJobsPage />} />
+              <Route path="/Attendance" element={<AttendanceDashboard />} />
               <Route path="/Client/profile" element={<ClientProfilePage />} />
             </Routes>
           </Content>

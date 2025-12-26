@@ -1,0 +1,173 @@
+/* =========================
+   Attendance Module Styles
+   ========================= */
+
+.attendance-container {
+  width: 100%;
+  padding: 16px;
+  
+}
+
+
+.ant-card {
+  border-radius: 14px;
+}
+
+.ant-card-head-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+
+.today-card {
+  background: #ffffff;
+}
+
+.today-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkin-btn {
+  background: #52c41a !important;
+  border-color: #52c41a !important;
+  min-width: 160px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.checkout-btn {
+  background: #faad14 !important;
+  border-color: #faad14 !important;
+  min-width: 160px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.absent-btn {
+  min-width: 160px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.action-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.hours-box {
+  text-align: center;
+  padding: 20px 32px;
+  background: #f7f9fc;
+  border-radius: 14px;
+  min-width: 180px;
+}
+
+.hours-box h2 {
+  margin: 8px 0 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1677ff;
+}
+
+.hours-box p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+.summary-card {
+  background: #ffffff;
+}
+
+.summary-item {
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.summary-present {
+  background: #f6ffed;
+}
+
+.summary-absent {
+  background: #fff2e8;
+}
+
+.summary-hours {
+  background: #e6f4ff;
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.summary-label {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+.recent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.recent-day {
+  border-radius: 14px;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.recent-present {
+  background: #f6ffed;
+}
+
+.recent-absent {
+  background: #fff2e8;
+}
+
+.recent-day strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+
+.ant-tag {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+
+.ant-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 768px) {
+  .today-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hours-box {
+    width: 100%;
+  }
+
+  .checkin-btn,
+  .checkout-btn,
+  .absent-btn {
+    width: 100%;
+  }
+}
